@@ -15,6 +15,9 @@ class Ride_Sharing:
     def add_driver(self, driver):
         self.drivers.append(driver)
 
+    def __repr__(self) -> str:
+        return f'{self.company_name} with riders:{len(self.riders)} and drivers:{len(self.drivers)}'
+
 
 class User(ABC):
     def __init__(self, name, email, nid) -> None:
@@ -142,3 +145,12 @@ class Bike(Vehicle):
 
     def start_drive(self):
         self.status = 'unavailable'
+
+
+# check the class integration
+go_ride = Ride_Sharing('Please ! Start ride')
+tanver = Rider('Tanver Rana', 'tanver@gmail.com', 12343, 'Mohammadpur', 1200)
+go_ride.add_rider(tanver)
+rana = Driver('Rana', 'rana@gmail.com', 12435, 'Farmgate')
+go_ride.add_driver(rana)
+print(go_ride)

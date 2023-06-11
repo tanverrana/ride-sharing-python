@@ -50,11 +50,16 @@ class Rider(User):
     def update_location(self, current_location):
         self.current_location = current_location
 
-    def request_ride(self, destination):
+    def request_ride(self, ride_sharing, destination):
         if not self.current_ride:
             ride_request = Ride_Request(self, destination)
-            ride_matcher = Ride_Matching()
-            self.current_ride = ride_matcher.find_driver(ride_request)
+            ride_matcher = Ride_Matching(ride_sharing.drivers)
+            ride = ride_matcher.find_driver(ride_request)
+            print(ride)
+            self.current_ride = ride
+
+    def show_current_ride(self):
+        print(self.current_ride)
 
 
 class Driver(User):
@@ -91,6 +96,9 @@ class Ride:
         self.rider.wallet -= self.estimated_fare
         self.driver.wallet += self.estimated_fare
 
+    def __repr__(self) -> str:
+        return f'Ride details. Started:{self.start_location} to {self.end_location}'
+
 
 class Ride_Request:
     def __init__(self, rider, end_location) -> None:
@@ -99,8 +107,8 @@ class Ride_Request:
 
 
 class Ride_Matching:
-    def __init__(self) -> None:
-        self.drivers = []
+    def __init__(self, drivers) -> None:
+        self.available_drivers = drivers
 
     def find_driver(self, ride_request):
         if len(self.available_drivers) > 0:
@@ -154,3 +162,5 @@ go_ride.add_rider(tanver)
 rana = Driver('Rana', 'rana@gmail.com', 12435, 'Farmgate')
 go_ride.add_driver(rana)
 print(go_ride)
+tanver.request_ride(go_ride, 'Uttara')
+tanver.show_current_ride()

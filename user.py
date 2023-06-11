@@ -23,3 +23,5 @@ class Rider(User):
 
     def display_profile(self):
         print(f'Rider : with name: {self.name} with email:{self.email}')
+
+    def request_ride(self, location, destination):

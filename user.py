@@ -2,6 +2,20 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 
+class Ride_Sharing:
+    def __init__(self, company_name) -> None:
+        self.company_name = company_name
+        self.riders = []
+        self.drivers = []
+        self.riders = []
+
+    def add_rider(self, rider):
+        self.riders.append(rider)
+
+    def add_driver(self, driver):
+        self.drivers.append(driver)
+
+
 class User(ABC):
     def __init__(self, name, email, nid) -> None:
         self.name = name
@@ -17,9 +31,9 @@ class User(ABC):
 
 
 class Rider(User):
-    def __init__(self, name, email, nid, current_location) -> None:
+    def __init__(self, name, email, nid, current_location, initial_amount) -> None:
         self.current_ride = None
-        self.wallet = 0
+        self.wallet = initial_amount
         self.current_location = current_location
         super().__init__(name, email, nid)
 
@@ -33,9 +47,8 @@ class Rider(User):
     def update_location(self, current_location):
         self.current_location = current_location
 
-    def request_ride(self, location, destination):
+    def request_ride(self, destination):
         if not self.current_ride:
-
             ride_request = Ride_Request(self, destination)
             ride_matcher = Ride_Matching()
             self.current_ride = ride_matcher.find_driver(ride_request)
@@ -94,3 +107,38 @@ class Ride_Matching:
                         ride_request.end_location)
             driver.accept_ride(ride)
             return ride
+
+
+class Vehicle(ABC):
+    Speed = {
+        'car': 60,
+        'bike': 60,
+        'cng': 29
+    }
+
+    def __init__(self, vehicle_type, license_plate, rate) -> None:
+        self.vehicle_type = vehicle_type
+        self.license_plate = license_plate
+        self.rate = rate
+        self.status = 'available'
+        super().__init__()
+
+    @abstractmethod
+    def start_driver(self):
+        pass
+
+
+class Car(Vehicle):
+    def __init__(self, vechile_type, license_plate, rate) -> None:
+        super().__init__(vechile_type, license_plate, rate)
+
+    def start_drive(self):
+        self.status = 'unavailable'
+
+
+class Bike(Vehicle):
+    def __init__(self, vehicle_type, license_plate, rate) -> None:
+        super().__init__(vehicle_type, license_plate, rate)
+
+    def start_drive(self):
+        self.status = 'unavailable'

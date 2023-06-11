@@ -17,19 +17,28 @@ class User(ABC):
 
 
 class Rider(User):
-    def __init__(self, name, email, nid) -> None:
+    def __init__(self, name, email, nid, current_location) -> None:
         self.current_ride = None
         self.wallet = 0
+        self.current_location = current_location
         super().__init__(name, email, nid)
 
     def display_profile(self):
         print(f'Rider : with name: {self.name} with email:{self.email}')
 
+    def load_cash(self, amount):
+        if amount > 0:
+            self.wallet += amount
+
+    def update_location(self, current_location):
+        self.current_location = current_location
+
     def request_ride(self, location, destination):
         if not self.current_ride:
-            # To do:Set ride properly
-            # TODO: set current ride via ride match
-            ride_request = None
+
+            ride_request = Ride_Request(self, destination)
+            ride_matcher = Ride_Matching()
+            self.current_ride = ride_matcher.find_driver(ride_request)
 
 
 class Driver(User):
@@ -40,10 +49,6 @@ class Driver(User):
 
     def display_profile(self):
         print(f'Rider : with name: {self.name} with email:{self.email}')
-
-    def load_cash(self, amount):
-        if amount > 0:
-            self.wallet += amount
 
     def accept_ride(self, ride):
         ride.set_Driver(self)
@@ -69,3 +74,23 @@ class Ride:
         self.end_time = datetime.now()
         self.rider.wallet -= self.estimated_fare
         self.driver.wallet += self.estimated_fare
+
+
+class Ride_Request:
+    def __init__(self, rider, end_location) -> None:
+        self.rider = rider
+        self.end_location = end_location
+
+
+class Ride_Matching:
+    def __init__(self) -> None:
+        self.drivers = []
+
+    def find_driver(self, ride_request):
+        if len(self.available_drivers) > 0:
+            # TODO: find the closet driver of the rider
+            driver = self.drivers[0]
+            ride = Ride(ride_request.rider.current_location,
+                        ride_request.end_location)
+            driver.accept_ride(ride)
+            return ride
